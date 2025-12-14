@@ -79,23 +79,56 @@ if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Get form values
+        const firstname = this.querySelector('#firstname').value;
+        const lastname = this.querySelector('#lastname').value;
+        const email = this.querySelector('#email').value;
+        const phone = this.querySelector('#phone').value;
+        const message = this.querySelector('#message').value;
+        
+        // Get selected services (checkboxes)
+        const selectedServices = Array.from(this.querySelectorAll('input[name="service"]:checked'))
+            .map(checkbox => checkbox.parentElement.querySelector('span').textContent)
+            .join(', ');
+        
         const formData = {
-            name: this.name.value,
-            email: this.email.value,
-            service: this.service.value,
-            message: this.message.value
+            name: firstname + " " + lastname,
+            email: email,
+            phone: phone,
+            services: selectedServices || 'Not specified',
+            message: message
         };
         
-        // Create email body
+        // Create professional email template
+        const emailSubject = `Project Inquiry from ${formData.name}`;
+        
         const emailBody = `
+Hi Noamaan,
+
+I'm reaching out regarding a potential project opportunity.
+
+Contact details:
+
 Name: ${formData.name}
 Email: ${formData.email}
-Service: ${formData.service}
-Message: ${formData.message}
-        `;
+Phone: ${formData.phone}
+
+Services interested in:
+
+${formData.services}
+
+Project details:
+
+${formData.message}
+
+Looking forward to hearing from you.
+
+Best regards,
+${formData.name}
+        `.trim();
         
         // Open default email client
-        const mailtoLink = `mailto:noamaan.mulla03@email.com?subject=Project Inquiry from ${formData.name}&body=${encodeURIComponent(emailBody)}`;
+        const mailtoLink = `mailto:noamaan.mulla03@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
         window.location.href = mailtoLink;
         
         // Show success message
